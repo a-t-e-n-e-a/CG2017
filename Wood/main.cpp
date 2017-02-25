@@ -36,11 +36,12 @@ int main()
     cin >> linkCount; cin.ignore();
     list<Link> links;
     list<Factory> factorys;
-    list<int> myFactorys;
+    vector<pair<int,int>> myFactorys;
     list<Troop> troops;
     Link link;
     Factory factory;
     Troop troop;
+    int done=0;
     
     for (int i = 0; i < linkCount; i++) {
         int factory1;
@@ -74,7 +75,7 @@ int main()
                 factory.production=arg3;
                 factorys.push_back(factory);
                 if (arg1==1){
-                    myFactorys.push_back(factory.name);                    
+                    myFactorys.push_back(std::make_pair(factory.content,factory.name));                    
                 }
             }
             else if (entityType=="TROOP"){
@@ -85,20 +86,40 @@ int main()
                 troop.dleft=arg5;
                 troops.push_back(troop);
             }
-            for (auto &itF:factorys){
-                if (itF.production==3 && itF.owner!=1 && !myFactorys.empty())
-                    //int origin = myFactorys.front();
-                    cout << "MOVE " << myFactorys.front() << " " << itF.name <<" 100" << endl;
-                    //myFactorys.pop_front();
-                }
-            
         }
+        done=0;
+        for (auto &itF:factorys){
+            
+            if (/*itF.production==3 && */itF.owner==0 && !myFactorys.empty()){
+            	int cont=0;
+            	sort(myFactorys.begin(),myFactorys.end());
+                pair<int,int> fab=*std::prev(myFactorys.end());
+            	cout << "MOVE " << fab.second << " " << itF.name <<" 100" << endl;
+            	done=1;
+            	break;
+            }
+        }
+        if (done!=1) {
+            for (auto &itF:factorys){
+                
+                if (/*itF.production==3 && */itF.owner==-1 && !myFactorys.empty()){
+                	int cont=0;
+                	sort(myFactorys.begin(),myFactorys.end());
+                    pair<int,int> fab=*std::prev(myFactorys.end());
+                	cout << "MOVE " << fab.second << " " << itF.name <<" 100" << endl;
+                	done=1;
+                	break;
+                }
+            }
+        }
+        if (done!=1) cout << "WAIT" << endl;
+    }
 
         // Write an action using cout. DON'T FORGET THE "<< endl"
         // To debug: cerr << "Debug messages..." << endl;
 
 
         // Any valid action, such as "WAIT" or "MOVE source destination cyborgs"
-        cout << "WAIT" << endl;
-    }
+       
+  
 }
