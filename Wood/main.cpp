@@ -20,12 +20,19 @@ struct Factory{
     int production;
     int owner;
     int content;
+    int strike;
 };
 struct Troop{
     int owner;
     int origin;
     int destination;
     int content;
+    int dleft;
+};
+struct Bomb{
+    int owner;
+    int origin;
+    int destination;
     int dleft;
 };
 int main()
@@ -38,9 +45,11 @@ int main()
     list<Factory> factorys;
     vector<pair<int,int>> myFactorys;
     list<Troop> troops;
+    list<Bomb> bombs;
     Link link;
     Factory factory;
     Troop troop;
+    Bomb bomb;
     int done=0;
     
     for (int i = 0; i < linkCount; i++) {
@@ -56,6 +65,7 @@ int main()
         factorys.clear();
         myFactorys.clear();
         troops.clear();
+        bombs.clear();
         int entityCount; // the number of entities (e.g. factories and troops)
         cin >> entityCount; cin.ignore();
         for (int i = 0; i < entityCount; i++) {
@@ -73,6 +83,7 @@ int main()
                 factory.owner=arg1;
                 factory.content=arg2;
                 factory.production=arg3;
+                factory.strike=arg4;
                 factorys.push_back(factory);
                 if (arg1==1){
                     myFactorys.push_back(std::make_pair(factory.content,factory.name));                    
@@ -85,6 +96,13 @@ int main()
                 troop.content=arg4;
                 troop.dleft=arg5;
                 troops.push_back(troop);
+            }
+            else if (entityType=="BOMB"){
+                bomb.owner=arg1;
+                bomb.origin=arg2;
+                bomb.destination=arg3;
+                bomb.dleft=arg4;
+                bombs.push_back(bomb);
             }
         }
         done=0;
