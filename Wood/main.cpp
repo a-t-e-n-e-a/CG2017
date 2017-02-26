@@ -114,31 +114,38 @@ int main()
                 bombs.push_back(bomb);
             }
         }
+        cout << "WAIT" ;
         done=0;
-        for (auto &itF:factorys){            
-            if (itF.owner==0 && !myFactorys.empty()){
+        for (auto &itF:factorys){    
+            if (itF.owner==1 && itF.content>2){
+            	int obj=find_neighbors(itF.name,neighbors);
+            	cout << ";MOVE " << itF.name << " " << obj <<" " << floor(itF.content*0.7) ;
+            	done=1;            	
+            }
+            /*if (itF.owner==0 && !myFactorys.empty()){
             	int cont=0;
             	sort(myFactorys.begin(),myFactorys.end());
                 pair<int,int> fab=*std::prev(myFactorys.end());
-            	cout << "MOVE " << fab.second << " " << itF.name <<" 100" << endl;
+            	cout << ";MOVE " << fab.second << " " << itF.name <<" 100" ;
             	myFactorys.pop_back();
             	done=1;            	
-            }
+            }*/
         }
-        if (done!=1) {
+        /*if (done!=1) {
             for (auto &itF:factorys){
                 
                 if (itF.owner==-1 && !myFactorys.empty()){
                 	int cont=0;
                 	sort(myFactorys.begin(),myFactorys.end());
                     pair<int,int> fab=*std::prev(myFactorys.end());
-                	cout << "MOVE " << fab.second << " " << itF.name <<" 100" << endl;
+                	cout << ";MOVE " << fab.second << " " << itF.name <<" 100";
                 	done=1;
                 	break;
                 }
             }
-        }
-        if (done!=1) cout << "WAIT" << endl;
+        }*/
+        //if (done!=1) cout << "WAIT" << endl;
+        cout << endl;
     }
 
         // Write an action using cout. DON'T FORGET THE "<< endl"
