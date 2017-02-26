@@ -39,6 +39,7 @@ struct Bomb{
 int find_closest(int origin, unordered_multimap<int,pair<int,int>> &neighbors){
 	auto range = neighbors.equal_range(origin);
 	//range.sort();
+	cerr << "dist : " <<range.first->second.first<<endl;
 	return range.first->second.second; //the id of node with least d ... (I hope)
 }
 int main()
@@ -118,7 +119,7 @@ int main()
         done=0;
         for (auto &itF:factorys){    
             if (itF.owner==1 && itF.content>2){
-            	int obj=find_neighbors(itF.name,neighbors);
+            	int obj=find_closest(itF.name,neighbors);
             	cout << ";MOVE " << itF.name << " " << obj <<" " << floor(itF.content*0.7) ;
             	done=1;            	
             }
