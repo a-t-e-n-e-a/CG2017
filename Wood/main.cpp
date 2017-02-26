@@ -36,11 +36,28 @@ struct Bomb{
     int destination;
     int dleft;
 };
-int find_closest(int origin, unordered_multimap<int,pair<int,int>> &neighbors){
-	auto range = neighbors.equal_range(origin);
-	//range.sort();
-	cerr << "dist : " <<range.first->second.first<<endl;
-	return range.first->second.second; //the id of node with least d ... (I hope)
+int find_closest(int origin, unordered_multimap<int,pair<int,int>> &neighbors, list<Factory> &factorys){
+	pair<unordered_multimap<int,pair<int,int>>::iterator,unordered_multimap<int,pair<int,int>>::iterator>  range = neighbors.equal_range(origin);
+	vector<pair<int,int>> tneighbors;
+	int result;
+	int result_owner;
+	for(unordered_multimap<int,pair<int,int>>::iterator it = range.first; it!=range.second; it++){
+		tneighbors.push_back(it->second);
+	}
+	sort(tneighbors.begin(),tneighbors.end());
+	auto it=tneighbors.begin();
+	do {
+		result = it->second; //the id of node with least d ...
+		it++;
+		for (Factory fac : factorys){
+			if (fac.name==result) {
+				result_owner=fac.owner;
+				break;
+			}
+		}		
+	}while(result_owner==1 && it!=tneighbors.end());//closest is friend
+	cerr << "dist : " << it->first <<endl;
+	return result; 
 }
 int main()
 {
@@ -119,7 +136,8 @@ int main()
         done=0;
         for (auto &itF:factorys){    
             if (itF.owner==1 && itF.content>2){
-            	int obj=find_closest(itF.name,neighbors);
+            	int obj=find_closest(itF.name,neighbors,factorys);
+            	
             	cout << ";MOVE " << itF.name << " " << obj <<" " << floor(itF.content*0.7) ;
             	done=1;            	
             }
