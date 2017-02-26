@@ -3,6 +3,7 @@
 #include <vector>
 #include <algorithm>
 #include <list>
+#include <unordered_map>
 
 using namespace std;
 
@@ -35,6 +36,11 @@ struct Bomb{
     int destination;
     int dleft;
 };
+int find_closest(int origin, unordered_multimap<int,pair<int,int>> &neighbors){
+	auto range = neighbors.equal_range(origin);
+	//range.sort();
+	return range.first->second.second; //the id of node with least d ... (I hope)
+}
 int main()
 {
     int factoryCount; // the number of factories
@@ -42,6 +48,7 @@ int main()
     int linkCount; // the number of links between factories
     cin >> linkCount; cin.ignore();
     list<Link> links;
+    unordered_multimap<int,pair<int,int>> neighbors; //node1,pair<distance,node2>
     list<Factory> factorys;
     vector<pair<int,int>> myFactorys;
     list<Troop> troops;
@@ -58,6 +65,8 @@ int main()
         int distance;
         cin >> link.f1 >> link.f2 >> link.d; cin.ignore();
         links.push_back(link);
+        neighbors.insert(make_pair(link.f1,make_pair(link.d,link.f2)));
+        neighbors.insert(make_pair(link.f2,make_pair(link.d,link.f1)));
     }
 
     // game loop
@@ -106,21 +115,20 @@ int main()
             }
         }
         done=0;
-        for (auto &itF:factorys){
-            
-            if (/*itF.production==3 && */itF.owner==0 && !myFactorys.empty()){
+        for (auto &itF:factorys){            
+            if (itF.owner==0 && !myFactorys.empty()){
             	int cont=0;
             	sort(myFactorys.begin(),myFactorys.end());
                 pair<int,int> fab=*std::prev(myFactorys.end());
             	cout << "MOVE " << fab.second << " " << itF.name <<" 100" << endl;
-            	done=1;
-            	break;
+            	myFactorys.pop_back();
+            	done=1;            	
             }
         }
         if (done!=1) {
             for (auto &itF:factorys){
                 
-                if (/*itF.production==3 && */itF.owner==-1 && !myFactorys.empty()){
+                if (itF.owner==-1 && !myFactorys.empty()){
                 	int cont=0;
                 	sort(myFactorys.begin(),myFactorys.end());
                     pair<int,int> fab=*std::prev(myFactorys.end());
