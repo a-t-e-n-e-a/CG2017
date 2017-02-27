@@ -58,7 +58,8 @@ struct Bomb{
 		tour_arrivee=ta;
     }
 };
-/*int find_closest(int origin, unordered_multimap<int,pair<int,int>> &neighbors, list<Factory> &factorys){
+//int obj=find_closest(itF->first,neighbors,factorys);
+int find_closest(int origin, unordered_multimap<int,pair<int,int>> &neighbors, map<int,Noeud> &factorys){
 	pair<unordered_multimap<int,pair<int,int>>::iterator,unordered_multimap<int,pair<int,int>>::iterator>  range = neighbors.equal_range(origin);
 	vector<pair<int,int>> tneighbors;
 	int result;
@@ -71,16 +72,13 @@ struct Bomb{
 	do {
 		result = it->second; //the id of node with least d ...
 		it++;
-		for (Factory fac : factorys){
-			if (fac.name==result) {
-				result_owner=fac.owner;
-				break;
-			}
+		factorys.find(result);	
+		result_owner=fac.owner;
 		}		
 	}while(result_owner==1 && it!=tneighbors.end());//closest is friend
 	cerr << "dist : " << it->first <<endl;
 	return result; 
-}*/
+}
 int main()
 {
     int factoryCount; // the number of factories
@@ -88,7 +86,7 @@ int main()
     int linkCount; // the number of links between factories
     cin >> linkCount; cin.ignore();
     list<Link> links;
-    //unordered_multimap<int,pair<int,int>> neighbors; //node1,pair<distance,node2>
+    unordered_multimap<int,pair<int,int>> neighbors; //node1,pair<distance,node2>
     map<int,Noeud> factorys;
     vector<pair<int,int>> myFactorys;
     map<int,Troop> troops;
@@ -173,44 +171,15 @@ int main()
         }
         cout << "WAIT" ;
         done=0;
-        for (auto &itF:factorys){    
-            if (itF.owner==1 && itF.content>2){
-            	int obj=find_closest(itF.name,neighbors,factorys);
+        for (auto itF=factorys.begin(); itF!=factorys.end(); itF++){    
+            if (itF->second.owner==1 && itF->second.content>2){
+            	int obj=find_closest(itF->first,neighbors,factorys);
             	
-            	cout << ";MOVE " << itF.name << " " << obj <<" " << floor(itF.content*0.7) ;
+            	cout << ";MOVE " << itF->first << " " << obj <<" " << floor(itF->second.content*0.7) ;
             	done=1;            	
             }
-            /*if (itF.owner==0 && !myFactorys.empty()){
-            	int cont=0;
-            	sort(myFactorys.begin(),myFactorys.end());
-                pair<int,int> fab=*std::prev(myFactorys.end());
-            	cout << ";MOVE " << fab.second << " " << itF.name <<" 100" ;
-            	myFactorys.pop_back();
-            	done=1;            	
-            }*/
         }
-        /*if (done!=1) {
-            for (auto &itF:factorys){
-                
-                if (itF.owner==-1 && !myFactorys.empty()){
-                	int cont=0;
-                	sort(myFactorys.begin(),myFactorys.end());
-                    pair<int,int> fab=*std::prev(myFactorys.end());
-                	cout << ";MOVE " << fab.second << " " << itF.name <<" 100";
-                	done=1;
-                	break;
-                }
-            }
-        }*/
-        //if (done!=1) cout << "WAIT" << endl;
         cout << endl;
     }
 
-        // Write an action using cout. DON'T FORGET THE "<< endl"
-        // To debug: cerr << "Debug messages..." << endl;
-
-
-        // Any valid action, such as "WAIT" or "MOVE source destination cyborgs"
-       
-  
 }
