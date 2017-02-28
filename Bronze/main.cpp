@@ -123,6 +123,47 @@ int find_closest(int origin, /*vector<pair<int,int>> &neighbors,*/ map<int,Node>
 	cerr << "dist : " << it->first <<endl;
 	return result; 
 }
+/*********BOARD*****************/
+
+//class Board{
+    pair<int,int> sumTroops(const map<int,Troop> &troops, const map<int,Node> &factorys, const int tour){
+		int ami=0;
+		int enemi=0;
+		for (auto it=troops.cbegin(); it!=troops.cend(); it++){
+			if (it->second.owner==1) ami+=it->second.content;
+			else enemi+=it->second.content;
+		}
+		for (auto it=factorys.cbegin(); it!=factorys.cend(); it++){
+					if (it->second.owner==1) ami+=it->second.content;
+					else enemi+=it->second.content;
+				}
+		return make_pair(ami,enemi);
+	};
+	//int winner(vector<pair<int,int>> &myFactorys, map<int,Troop> &troops, map<int,Node> &factorys, map<int,Bomb> &bombs,int &count[3], int tour){
+	int winner(map<int,Troop> &troops, map<int,Node> &factorys, int tour){
+		pair<int,int> ami_enemi=sumTroops(troops, factorys, tour);
+		if (ami_enemi.first==0) return -1;
+		else if (ami_enemi.second==0) return 1;
+		else if (tour>399){
+			if (ami_enemi.first > ami_enemi.second) return 1;
+			else if (ami_enemi.first < ami_enemi.second) return -1;
+		}
+		else return 0;			
+	};
+	
+//}
+/*
+ * One game turn is computed as follows:
+
+    Move existing troops and bombs
+    Execute user orders
+    Produce new cyborgs in all factories
+    Solve battles
+    Make the bombs explode
+    Check end conditions
+ * 
+ */
+
 /************************************************************************************/
 int main()
 {
@@ -130,39 +171,30 @@ int main()
     cin >> factoryCount; cin.ignore();
     int linkCount; // the number of links between factories
     cin >> linkCount; cin.ignore();
-    list<Link> links;
-    //unordered_multimap<int,pair<int,int>> neighbors; //node1,pair<distance,node2>
-    
     vector<pair<int,int>> myFactorys;
-    
     map<int,Troop> troops;
     map<int,Node> factorys;
     map<int,Bomb> bombs;
-    Link link;
-    //Node factory;
-    //Troop troop;
-    //Bomb bomb;
-    int done=0;
     int count[3]={0,0,0};
-    
-    for (int i = 0; i < linkCount; i++) { // to do : remove using link 
-        int factory1;
-        int factory2;
-        int distance;
-        cin >> link.f1 >> link.f2 >> link.d; cin.ignore();
-        links.push_back(link);
-        if (factorys.find(link.f1) == factorys.end()){
-            Node emptyNode(0,0,0,0);
-        	factorys.emplace(link.f1,emptyNode);
-        }
-        factorys[link.f1].neighbors.push_back(make_pair(link.d,link.f2));
-        if (factorys.find(link.f2) == factorys.end()){
-            Node emptyNode(0,0,0,0);
-            factorys.emplace(link.f2,emptyNode);
-        }
-        factorys[link.f2].neighbors.push_back(make_pair(link.d,link.f1));        
-    }
     int tour=0;
+    
+    for (int i = 0; i < linkCount; i++) { 
+        int f1;
+        int f2;
+        int d;
+        cin >> f1 >> f2 >> d; cin.ignore();
+        if (factorys.find(f1) == factorys.end()){
+            Node emptyNode(0,0,0,0);
+        	factorys.emplace(f1,emptyNode);
+        }
+        factorys[f1].neighbors.push_back(make_pair(d,f2));
+        if (factorys.find(f2) == factorys.end()){
+            Node emptyNode(0,0,0,0);
+            factorys.emplace(f2,emptyNode);
+        }
+        factorys[f2].neighbors.push_back(make_pair(d,f1));        
+    }
+
     // game loop
     while (1) {
         tour++;
@@ -215,16 +247,14 @@ int main()
             }
         }
         cout << "WAIT" ;
-        done=0;
         for (auto itF=factorys.begin(); itF!=factorys.end(); itF++){    
             if (itF->second.owner==1 && itF->second.content>2){
             	int obj=find_closest(itF->first,factorys);
-            	
             	cout << ";MOVE " << itF->first << " " << obj <<" " << floor(itF->second.content*0.7) ;
-            	done=1;            	
             }
         }
         cout << endl;
+        cerr << winner(troops, factorys, tour) << endl;
     }
 
 }
