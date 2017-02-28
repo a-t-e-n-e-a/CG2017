@@ -3,7 +3,7 @@
 #include <vector>
 #include <algorithm>
 #include <list>
-#include <unordered_map>
+//#include <unordered_map>
 #include <map>
 
 using namespace std;
@@ -19,13 +19,21 @@ class Node{
     vector<pair<int,int>> neighbors;
     
     Node(int p, int o, int c, int s);
-    /*Node(){
+    Node(const Node &n);
+    Node();
+};
+Node::Node(){
     	production=0;
     	owner=0;
     	content=0;
     	strike=0;
-    }*/
-};
+    }
+Node::Node(const Node &n){
+	production=n.production;
+	owner=n.owner;
+	content=n.content;
+	strike=n.strike;
+}
 Node::Node(int p, int o, int c, int s){
     	production=p;
     	owner=o;
@@ -47,6 +55,8 @@ class Troop{
     int content;
     int tour_arrivee;
     Troop(int own, int ori, int de, int c, int ta);
+    Troop(const Troop &t);
+    Troop();
     
 };
 Troop::Troop(int own, int ori, int de, int c, int ta){
@@ -56,6 +66,20 @@ Troop::Troop(int own, int ori, int de, int c, int ta){
     	content=c;
     	tour_arrivee=ta;
     }
+Troop::Troop(const Troop &t){
+    owner=t.owner;
+	origin=t.origin;
+	destination=t.destination;
+	content=t.content;
+	tour_arrivee=t.tour_arrivee;
+}
+Troop::Troop(){
+    owner=0;
+	origin=-1;
+	destination=-1;
+	content=-1;
+	tour_arrivee=-1;
+    }
 class Bomb{
     public: 
 	//int id
@@ -64,8 +88,21 @@ class Bomb{
     int destination;
     int tour_arrivee;
     Bomb(int own, int ori, int de, int ta);
-    
+    Bomb(const Bomb &bomb);
+    Bomb();
 };
+Bomb::Bomb(){
+    owner=0;
+    origin=-1;
+    destination=-1;
+    tour_arrivee=-1;
+    }
+Bomb::Bomb(const Bomb &bomb){
+    owner=bomb.owner;
+    origin=bomb.origin;
+    destination=bomb.destination;
+    tour_arrivee=bomb.tour_arrivee;
+    }
 Bomb::Bomb(int own, int ori, int de, int ta){
 		owner=own;
 		origin=ori;
