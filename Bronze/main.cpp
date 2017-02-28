@@ -130,13 +130,16 @@ int find_closest(int origin, /*vector<pair<int,int>> &neighbors,*/ map<int,Node>
 		int ami=0;
 		int enemi=0;
 		for (auto it=troops.cbegin(); it!=troops.cend(); it++){
-			if (it->second.owner==1) ami+=it->second.content;
-			else enemi+=it->second.content;
+			if (it->second.tour_arrivee > tour){
+				if (it->second.owner==1) ami+=it->second.content;
+				else enemi+=it->second.content;
+			}
 		}
 		for (auto it=factorys.cbegin(); it!=factorys.cend(); it++){
 					if (it->second.owner==1) ami+=it->second.content;
-					else enemi+=it->second.content;
+					else if (it->second.owner==-1)enemi+=it->second.content;
 				}
+				cerr << ami << " " << enemi << endl;
 		return make_pair(ami,enemi);
 	};
 	//int winner(vector<pair<int,int>> &myFactorys, map<int,Troop> &troops, map<int,Node> &factorys, map<int,Bomb> &bombs,int &count[3], int tour){
