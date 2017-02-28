@@ -153,6 +153,19 @@ int find_closest(int origin, /*vector<pair<int,int>> &neighbors,*/ map<int,Node>
 		}
 		else return 0;			
 	};
+	void solveBattles(map<int,Troop> &troops, map<int,Node> &factorys, int tour){ //plus produce cyborgs in factories
+		for (auto it=factorys.begin(); it!=factorys.end(); it++){//produce
+			it->second.content+=it->second.production;
+		}
+		for (auto it=factorys.begin(); it!=factorys.end(); it++){//solve battles // todo: erase dead troops 
+			int entries=0; //amis >0 enemis <0
+			for (auto jt=troops.cbegin(); jt!=troops.cend(); jt++){
+				if(jt->second.tour_arrivee==tour && jt->second.destination==it->first) entries+=(jt->second.owner*jt->second.content); 
+			}
+			it->second.content+=(it->second.owner*entries);//update content after battle
+		    cerr << it->first << " cont=" << it->second.content << endl;
+		}		
+	}
 	
 //}
 /*
@@ -258,6 +271,7 @@ int main()
         }
         cout << endl;
         cerr << winner(troops, factorys, tour) << endl;
+        solveBattles(troops, factorys, tour);
     }
 
 }
