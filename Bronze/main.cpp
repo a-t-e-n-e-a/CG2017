@@ -123,6 +123,7 @@ int find_closest(int origin, /*vector<pair<int,int>> &neighbors,*/ map<int,Node>
 	cerr << "dist : " << it->first <<endl;
 	return result; 
 }
+/************************************************************************************/
 int main()
 {
     int factoryCount; // the number of factories
@@ -159,17 +160,13 @@ int main()
             Node emptyNode(0,0,0,0);
             factorys.emplace(link.f2,emptyNode);
         }
-        factorys[link.f2].neighbors.push_back(make_pair(link.d,link.f1));
-        //neighbors.insert(make_pair(link.f1,make_pair(link.d,link.f2)));
-        //neighbors.insert(make_pair(link.f2,make_pair(link.d,link.f1)));
+        factorys[link.f2].neighbors.push_back(make_pair(link.d,link.f1));        
     }
     int tour=0;
     // game loop
     while (1) {
         tour++;
         myFactorys.clear();
-        //troops.clear();
-        //bombs.clear();
         int entityCount; // the number of entities (e.g. factories and troops)
         cin >> entityCount; cin.ignore();
         for (int i = 0; i < entityCount; i++) {
@@ -195,13 +192,13 @@ int main()
             	if (troops.find(id) == troops.end()){
             		troops.emplace(id,Troop(arg1,arg2,arg3,arg4, arg5+tour));
             	}
-            	else {
+            	/*else {
             		troops[id].owner=arg1;
 					troops[id].origin=arg2;
 					troops[id].destination=arg3;
 					troops[id].content=arg4;
 					troops[id].tour_arrivee=arg5+tour;
-            	}
+            	}*/ //donees statiques
             }
             else if (entityType=="BOMB"){
             	int id=arg1*count[arg1+1];
@@ -209,19 +206,19 @@ int main()
             	if (bombs.find(id) == bombs.end()){
             		bombs.emplace(id,Bomb(arg1,arg2,arg3,arg4+tour));
             	}
-            	else {
+            	/*else {
                 bombs[id].owner=arg1;
                 bombs[id].origin=arg2;
                 bombs[id].destination=arg3;
                 bombs[id].tour_arrivee=arg4+tour;
-            	}
+            	}*/ //donees statiques
             }
         }
         cout << "WAIT" ;
         done=0;
         for (auto itF=factorys.begin(); itF!=factorys.end(); itF++){    
             if (itF->second.owner==1 && itF->second.content>2){
-            	int obj=find_closest(itF->first/*,itF->second.neighbors*/,factorys);
+            	int obj=find_closest(itF->first,factorys);
             	
             	cout << ";MOVE " << itF->first << " " << obj <<" " << floor(itF->second.content*0.7) ;
             	done=1;            	
