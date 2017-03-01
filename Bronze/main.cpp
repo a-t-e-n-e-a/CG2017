@@ -155,7 +155,7 @@ int find_closest(int origin, /*vector<pair<int,int>> &neighbors,*/ map<int,Node>
 	};
 	void solveBattles(map<int,Troop> &troops, map<int,Node> &factorys, int tour){ //plus produce cyborgs in factories
 		for (auto it=factorys.begin(); it!=factorys.end(); it++){//produce
-			it->second.content+=it->second.production;
+			if(it->second.owner!=0) it->second.content+=it->second.production;
 		}
 		for (auto it=factorys.begin(); it!=factorys.end(); it++){//solve battles // todo: erase dead troops 
 			int entries=0; //amis >0 enemis <0
