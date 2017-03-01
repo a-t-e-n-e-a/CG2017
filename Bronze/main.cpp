@@ -167,26 +167,26 @@ int find_closest(int origin, /*vector<pair<int,int>> &neighbors,*/ map<int,Node>
 			    if(entries <0){
 			        if(it->second.content+entries <0) {//enemy will take it
 			            it->second.content=-(it->second.content+entries);
-			            it->second.owner=-1
+			            it->second.owner=-1;
 			        }
 			        else if(it->second.content+entries >0) {//enemy will not take it
 			            it->second.content+=entries;
 			        }
 			    }
 			    else if (entries>0){
-					    if(it->second.content<entries) {//I will take it
-					            it->second.content=-(it->second.content-entries);
-					            it->second.owner=1
-					        }
-					        else if(it->second.content+entries >0) {//I will not take it
-					            it->second.content-=entries;
-					        }
+				    if(it->second.content<entries) {//I will take it
+			            it->second.content=-(it->second.content-entries);
+			            it->second.owner=1;
 			        }
+			        else if(it->second.content+entries >0) {//I will not take it
+			            it->second.content-=entries;
+			        }
+			        
 			    }
 			}
 			else if (abs(entries)>it->second.content){
 					it->second.owner=it->second.owner*-1;
-					else it->second.content=abs(it->second.content-abs(entries));
+					it->second.content=abs(it->second.content-abs(entries));
 			}
 			else it->second.content+=(it->second.owner*entries);
 		    cerr << it->first << " cont=" << it->second.content << endl;
