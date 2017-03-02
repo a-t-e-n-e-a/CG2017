@@ -5,6 +5,9 @@
 #include <list>
 //#include <unordered_map>
 #include <map>
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* time */
+#include <sstream>
 
 using namespace std;
 
@@ -110,7 +113,7 @@ Bomb::Bomb(int own, int ori, int de, int ta){
 		tour_arrivee=ta;
     }
 //int obj=find_closest(itF->first,neighbors,factorys);
-int find_closest(int origin, /*vector<pair<int,int>> &neighbors,*/ map<int,Node> &factorys){
+int find_closest(int origin, map<int,Node> &factorys){
 	int result;
 	int result_owner;
 	sort(factorys[origin].neighbors.begin(),factorys[origin].neighbors.end());
@@ -202,6 +205,34 @@ int find_closest(int origin, /*vector<pair<int,int>> &neighbors,*/ map<int,Node>
 		    cerr << it->first << " cont=" << it->second.content << endl;
 		}		
 	}
+string generateBomb(map<int,Node> &factorys, int count[3]){
+	ostringstream res;
+	res << "";
+	if (count[2]<2){
+		auto it=factorys.begin();
+		do {
+			it=factorys.begin();
+			int r=rand() % (int)(factorys.size());
+			//cerr << "r "<< r<< endl;
+			std::advance(it, r);
+		}while (it->second.owner!=-1);
+		int result_owner;
+		int result;
+		sort(factorys[it->first].neighbors.begin(),factorys[it->first].neighbors.end());
+		auto jt=factorys[it->first].neighbors.begin();
+		do {
+			result = jt->second; //the id of node with least d ...
+			jt++;	
+			result_owner=factorys[result].owner;
+		}while(result_owner!=1 && jt!=factorys[it->first].neighbors.end());
+		if(jt!=factorys[it->first].neighbors.end()) {
+			res << ";BOMB " << result << " " << it->first;
+			
+		}
+		
+	}
+	return res.str();
+}
 	
 //}
 /*
@@ -219,6 +250,7 @@ int find_closest(int origin, /*vector<pair<int,int>> &neighbors,*/ map<int,Node>
 /************************************************************************************/
 int main()
 {
+	srand (123045);
     int factoryCount; // the number of factories
     cin >> factoryCount; cin.ignore();
     int linkCount; // the number of links between factories
@@ -305,10 +337,12 @@ int main()
             	cout << ";MOVE " << itF->first << " " << obj <<" " << floor(itF->second.content*0.7) ;
             }
         }
-        cout << endl;
+        
         cerr << winner(troops, factorys, tour) << endl;
         solveBattles(troops, factorys, tour);
         explodeBombs(factorys, bombs, tour);
+        if( tour % 8 ==7) cout << generateBomb(factorys, count);  
+        cout << endl;
     }
 
 }
