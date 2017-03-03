@@ -208,7 +208,7 @@ int find_closest(int origin, map<int,Node> &factorys){
 string generateBomb(map<int,Node> &factorys, int count[3]){
 	ostringstream res;
 	res << "";
-	if (count[2]<2){
+	if (count[2]<=2){
 		auto it=factorys.begin();
 		do {
 			it=factorys.begin();
@@ -376,6 +376,8 @@ int main()
             }
         }
         cout << "WAIT" ;
+        cout << generateInc(factorys);
+        
         for (auto itF=factorys.begin(); itF!=factorys.end(); itF++){    
             if (itF->second.owner==1 && itF->second.content>3){
             	int obj=find_closest(itF->first,factorys);
@@ -384,13 +386,13 @@ int main()
             	itF->second.content-=qte;
             }
         }
-        
-        //cerr << winner(troops, factorys, tour) << endl;
         cout << generateMove(factorys) ;//<< endl;
-        solveBattles(troops, factorys, tour);
-        explodeBombs(factorys, bombs, tour);        
         if( tour % 8 ==7) cout << generateBomb(factorys, count); 
         cout << generateInc(factorys);
+        solveBattles(troops, factorys, tour);
+        explodeBombs(factorys, bombs, tour);   
+        //cerr << winner(troops, factorys, tour) << endl;
+        
         cout << endl;
     }
 
