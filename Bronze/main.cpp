@@ -163,7 +163,7 @@ int find_closest(int origin, map<int,Node> &factorys){
 				if(content>20) factorys[it->second.destination].content=content-floor(content/2);
 				else if (content>10) factorys[it->second.destination].content=content-10;
 				else factorys[it->second.destination].content=0;
-			}//Il reste la production à geler pendant 5 tours 
+			}//Il reste la production Ã  geler pendant 5 tours 
 		}
 	}
 	void solveBattles(map<int,Troop> &troops, map<int,Node> &factorys, int tour){ //plus produce cyborgs in factories
@@ -233,7 +233,24 @@ string generateBomb(map<int,Node> &factorys, int count[3]){
 	}
 	return res.str();
 }
-	
+string generateInc(map<int,Node> &factorys){// todo : reduce content of factory
+	ostringstream res;
+	res << "";
+	auto it=factorys.begin();
+	int count=0;
+	do {
+	    count++;
+		it=factorys.begin();
+		int r=rand() % (int)(factorys.size());
+		//cerr << "r "<< r<< endl;
+		std::advance(it, r);
+	}while (!(it->second.owner==1 && it->second.content>12) && count <10);
+	if(count<10) {
+	    cerr << "INC " << it->first << " "<< it->second.owner << " " << it->second.content << endl;
+		res << ";INC " << it->first;
+	}
+	return res.str();
+}	
 //}
 /*
  * One game turn is computed as follows:
@@ -340,8 +357,10 @@ int main()
         
         cerr << winner(troops, factorys, tour) << endl;
         solveBattles(troops, factorys, tour);
-        explodeBombs(factorys, bombs, tour);
-        if( tour % 8 ==7) cout << generateBomb(factorys, count);  
+        //explodeBombs(factorys, bombs, tour);
+        
+        //if( tour % 8 ==7) cout << generateBomb(factorys, count); 
+        cout << generateInc(factorys);
         cout << endl;
     }
 
