@@ -142,7 +142,7 @@ int find_closest(int origin, map<int,Node> &factorys){
 					if (it->second.owner==1) ami+=it->second.content;
 					else if (it->second.owner==-1)enemi+=it->second.content;
 				}
-				cerr << ami << " " << enemi << endl;
+				//cerr << ami << " " << enemi << endl;
 		return make_pair(ami,enemi);
 	};
 	//int winner(vector<pair<int,int>> &myFactorys, map<int,Troop> &troops, map<int,Node> &factorys, map<int,Bomb> &bombs,int &count[3], int tour){
@@ -252,6 +252,33 @@ string generateInc(map<int,Node> &factorys){
 	}
 	return res.str();
 }	
+string generateMove(map<int,Node> &factorys){
+	ostringstream res;
+	res << "";
+	auto it=factorys.begin();
+	int count=0;
+	do {
+		it=factorys.begin();
+		int r=rand() % (int)(factorys.size());
+		count++;
+	    std::advance(it, r);
+	    //cerr << "r "<< r << " " << it->second.owner << endl;
+		
+	}while (it->second.owner!=1 && count < 10);//choose origin -> me
+	if (count==10) return res.str();
+	auto jt=factorys.begin();
+	do {
+	    count++;
+		jt=factorys.begin();
+		int r=rand() % (int)(factorys.size());
+		std::advance(jt, r);
+	}while(it->first==jt->first && count <20);
+	if (count==20) return res.str();	
+	int qte=floor(it->second.content*0.9);
+	//cerr << "wtf "<< it->second.owner << " " << jt->second.owner << endl;
+	res << ";MOVE " << it->first << " " << jt->first << " " << qte ;
+	return res.str();
+}
 //}
 /*
  * One game turn is computed as follows:
@@ -350,7 +377,7 @@ int main()
         }
         cout << "WAIT" ;
         for (auto itF=factorys.begin(); itF!=factorys.end(); itF++){    
-            if (itF->second.owner==1 && itF->second.content>2){
+            if (itF->second.owner==1 && itF->second.content>3){
             	int obj=find_closest(itF->first,factorys);
             	int qte=floor(itF->second.content*0.9);
             	cout << ";MOVE " << itF->first << " " << obj <<" " << qte ;
@@ -358,10 +385,10 @@ int main()
             }
         }
         
-        cerr << winner(troops, factorys, tour) << endl;
+        //cerr << winner(troops, factorys, tour) << endl;
+        cout << generateMove(factorys) ;//<< endl;
         solveBattles(troops, factorys, tour);
-        explodeBombs(factorys, bombs, tour);
-        
+        explodeBombs(factorys, bombs, tour);        
         if( tour % 8 ==7) cout << generateBomb(factorys, count); 
         cout << generateInc(factorys);
         cout << endl;
