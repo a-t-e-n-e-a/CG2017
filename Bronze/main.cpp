@@ -123,7 +123,7 @@ int find_closest(int origin, map<int,Node> &factorys){
 		it++;	
 		result_owner=factorys[result].owner;
 	}while(result_owner==1 && it!=factorys[origin].neighbors.end());//closest is friend
-	cerr << "dist : " << it->first <<endl;
+	//cerr << "dist : " << it->first <<endl;
 	return result; 
 }
 /*********BOARD*****************/
@@ -163,7 +163,7 @@ int find_closest(int origin, map<int,Node> &factorys){
 				if(content>20) factorys[it->second.destination].content=content-floor(content/2);
 				else if (content>10) factorys[it->second.destination].content=content-10;
 				else factorys[it->second.destination].content=0;
-			}//Il reste la production Ã  geler pendant 5 tours 
+			}//Il reste la production à geler pendant 5 tours 
 		}
 	}
 	void solveBattles(map<int,Troop> &troops, map<int,Node> &factorys, int tour){ //plus produce cyborgs in factories
@@ -233,7 +233,7 @@ string generateBomb(map<int,Node> &factorys, int count[3]){
 	}
 	return res.str();
 }
-string generateInc(map<int,Node> &factorys){// todo : reduce content of factory
+string generateInc(map<int,Node> &factorys){
 	ostringstream res;
 	res << "";
 	auto it=factorys.begin();
@@ -244,10 +244,11 @@ string generateInc(map<int,Node> &factorys){// todo : reduce content of factory
 		int r=rand() % (int)(factorys.size());
 		//cerr << "r "<< r<< endl;
 		std::advance(it, r);
-	}while (!(it->second.owner==1 && it->second.content>12) && count <10);
+	}while (!(it->second.owner==1 && it->second.content>12 && it->second.production<3) && count <10);
 	if(count<10) {
 	    cerr << "INC " << it->first << " "<< it->second.owner << " " << it->second.content << endl;
 		res << ";INC " << it->first;
+		it->second.content-=10;
 	}
 	return res.str();
 }	
@@ -351,15 +352,17 @@ int main()
         for (auto itF=factorys.begin(); itF!=factorys.end(); itF++){    
             if (itF->second.owner==1 && itF->second.content>2){
             	int obj=find_closest(itF->first,factorys);
-            	cout << ";MOVE " << itF->first << " " << obj <<" " << floor(itF->second.content*0.7) ;
+            	int qte=floor(itF->second.content*0.9);
+            	cout << ";MOVE " << itF->first << " " << obj <<" " << qte ;
+            	itF->second.content-=qte;
             }
         }
         
         cerr << winner(troops, factorys, tour) << endl;
         solveBattles(troops, factorys, tour);
-        //explodeBombs(factorys, bombs, tour);
+        explodeBombs(factorys, bombs, tour);
         
-        //if( tour % 8 ==7) cout << generateBomb(factorys, count); 
+        if( tour % 8 ==7) cout << generateBomb(factorys, count); 
         cout << generateInc(factorys);
         cout << endl;
     }
