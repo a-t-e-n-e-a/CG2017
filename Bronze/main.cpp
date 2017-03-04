@@ -277,6 +277,7 @@ string generateMove(map<int,Node> &factorys){
 	int qte=floor(it->second.content*0.9);
 	//cerr << "wtf "<< it->second.owner << " " << jt->second.owner << endl;
 	res << ";MOVE " << it->first << " " << jt->first << " " << qte ;
+	cerr << ";MOVE " << it->first << " " << jt->first << " " << qte << endl;
 	return res.str();
 }
 //}
