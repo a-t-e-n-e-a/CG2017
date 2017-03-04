@@ -11,7 +11,7 @@
 
 using namespace std;
 
-
+#define try 7
 class Node{
     //int id;
     public: 
@@ -170,10 +170,14 @@ int find_closest(int origin, map<int,Node> &factorys){
 		for (auto it=factorys.begin(); it!=factorys.end(); it++){//produce
 			if(it->second.owner!=0 && it->second.strike==0) it->second.content+=it->second.production;
 		}
-		for (auto it=factorys.begin(); it!=factorys.end(); it++){//solve battles // todo: erase dead troops 
+		for (auto it=factorys.begin(); it!=factorys.end(); it++){//solve battles 
 			int entries=0; //amis >0 enemis <0
 			for (auto jt=troops.cbegin(); jt!=troops.cend(); jt++){
-				if(jt->second.tour_arrivee==tour && jt->second.destination==it->first) entries+=(jt->second.owner*jt->second.content); 
+				if(jt->second.tour_arrivee==tour && jt->second.destination==it->first) {
+					entries+=(jt->second.owner*jt->second.content); 
+					troops.erase(jt);
+				}
+				
 			}
 			//update content and owners after battle
 			if(it->second.owner==0){
@@ -202,7 +206,7 @@ int find_closest(int origin, map<int,Node> &factorys){
 					it->second.content=abs(it->second.content-abs(entries));
 			}
 			else it->second.content+=(it->second.owner*entries);
-		    cerr << it->first << " cont=" << it->second.content << endl;
+		    //cerr << it->first << " cont=" << it->second.content << endl;
 		}		
 	}
 string generateBomb(map<int,Node> &factorys, int count[3]){
@@ -244,9 +248,9 @@ string generateInc(map<int,Node> &factorys){
 		int r=rand() % (int)(factorys.size());
 		//cerr << "r "<< r<< endl;
 		std::advance(it, r);
-	}while (!(it->second.owner==1 && it->second.content>12 && it->second.production<3) && count <10);
-	if(count<10) {
-	    cerr << "INC " << it->first << " "<< it->second.owner << " " << it->second.content << endl;
+	}while (!(it->second.owner==1 && it->second.content>12 && it->second.production<3) && count <try);
+	if(count<try) {
+	    //cerr << "INC " << it->first << " "<< it->second.owner << " " << it->second.content << endl;
 		res << ";INC " << it->first;
 		it->second.content-=10;
 	}
@@ -264,8 +268,8 @@ string generateMove(map<int,Node> &factorys){
 	    std::advance(it, r);
 	    //cerr << "r "<< r << " " << it->second.owner << endl;
 		
-	}while (it->second.owner!=1 && count < 10);//choose origin -> me
-	if (count==10) return res.str();
+	}while (it->second.owner!=1 && count < try);//choose origin -> me
+	if (count==try) return res.str();
 	auto jt=factorys.begin();
 	do {
 	    count++;
@@ -274,10 +278,11 @@ string generateMove(map<int,Node> &factorys){
 		std::advance(jt, r);
 	}while(it->first==jt->first && count <20);
 	if (count==20) return res.str();	
-	int qte=floor(it->second.content*0.9);
+	int qte=std::min(0.0,floor(it->second.content*0.9));
 	//cerr << "wtf "<< it->second.owner << " " << jt->second.owner << endl;
 	res << ";MOVE " << it->first << " " << jt->first << " " << qte ;
-	cerr << ";MOVE " << it->first << " " << jt->first << " " << qte << endl;
+	//cerr << ";MOVE " << it->first << " " << jt->first << " " << qte << endl;
+	jt->second.content-=qte;
 	return res.str();
 }
 //}
@@ -378,7 +383,7 @@ int main()
         }
         cout << "WAIT" ;
         cout << generateInc(factorys);
-        
+        cout << generateMove(factorys) ;
         for (auto itF=factorys.begin(); itF!=factorys.end(); itF++){    
             if (itF->second.owner==1 && itF->second.content>3){
             	int obj=find_closest(itF->first,factorys);
@@ -388,7 +393,7 @@ int main()
             }
         }
         cout << generateMove(factorys) ;//<< endl;
-        if( tour % 8 ==7) cout << generateBomb(factorys, count); 
+        if( tour % 20 ==13) cout << generateBomb(factorys, count); 
         cout << generateInc(factorys);
         solveBattles(troops, factorys, tour);
         explodeBombs(factorys, bombs, tour);   
