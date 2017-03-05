@@ -214,21 +214,23 @@ string generateBomb(map<int,Node> &factorys, int count[3]){
 	res << "";
 	if (count[2]<=2){
 		auto it=factorys.begin();
+		int count=0;
 		do {
 			it=factorys.begin();
 			int r=rand() % (int)(factorys.size());
 			//cerr << "r "<< r<< endl;
 			std::advance(it, r);
-		}while (it->second.owner!=-1);
+		}while (it->second.owner!=-1 && count <try );
 		int result_owner;
 		int result;
 		sort(factorys[it->first].neighbors.begin(),factorys[it->first].neighbors.end());
 		auto jt=factorys[it->first].neighbors.begin();
+		count=0;
 		do {
 			result = jt->second; //the id of node with least d ...
 			jt++;	
 			result_owner=factorys[result].owner;
-		}while(result_owner!=1 && jt!=factorys[it->first].neighbors.end());
+		}while(result_owner!=1 && jt!=factorys[it->first].neighbors.end() && count <try);
 		if(jt!=factorys[it->first].neighbors.end()) {
 			res << ";BOMB " << result << " " << it->first;
 			
@@ -276,8 +278,8 @@ string generateMove(map<int,Node> &factorys){
 		jt=factorys.begin();
 		int r=rand() % (int)(factorys.size());
 		std::advance(jt, r);
-	}while(it->first==jt->first && count <20);
-	if (count==20) return res.str();	
+	}while(it->first==jt->first && count <2*try);
+	if (count==2*try) return res.str();	
 	int qte=std::min(0.0,floor(it->second.content*0.9));
 	//cerr << "wtf "<< it->second.owner << " " << jt->second.owner << endl;
 	res << ";MOVE " << it->first << " " << jt->first << " " << qte ;
@@ -383,7 +385,9 @@ int main()
         }
         cout << "WAIT" ;
         cout << generateInc(factorys);
+        cerr << "generateInc(factorys)" << endl;
         cout << generateMove(factorys) ;
+        cerr << "generateMove(factorys)" << endl;
         for (auto itF=factorys.begin(); itF!=factorys.end(); itF++){    
             if (itF->second.owner==1 && itF->second.content>3){
             	int obj=find_closest(itF->first,factorys);
@@ -393,8 +397,10 @@ int main()
             }
         }
         cout << generateMove(factorys) ;//<< endl;
+        cerr << "generateMove(factorys)" << endl ;
         if( tour % 20 ==13) cout << generateBomb(factorys, count); 
-        cout << generateInc(factorys);
+        //cout << generateInc(factorys);
+        //cerr << "generateInc(factorys)" << endl ;
         solveBattles(troops, factorys, tour);
         explodeBombs(factorys, bombs, tour);   
         //cerr << winner(troops, factorys, tour) << endl;
