@@ -287,6 +287,34 @@ string generateMove(map<int,Node> &factorys){
 	jt->second.content-=qte;
 	return res.str();
 }
+pair<int,string> simulateTour(map<int,Troop> troops, map<int,Node> factorys, map<int,Bomb> bombs,int count[3], int tour){
+	ostringstream res;
+	res << "WAIT" ;
+	res << generateInc(factorys);
+	//cerr << "generateInc(factorys)" << endl;
+	for (int i=0; i<try; i++){
+		res << generateMove(factorys) ;
+	}
+	//cerr << "generateMove(factorys)" << endl;
+	/*for (auto itF=factorys.begin(); itF!=factorys.end(); itF++){    
+		if (itF->second.owner==1 && itF->second.content>3){
+			int obj=find_closest(itF->first,factorys);
+			int qte=floor(itF->second.content*0.9);
+			cout << ";MOVE " << itF->first << " " << obj <<" " << qte ;
+			itF->second.content-=qte;
+		}
+	}*/
+	//cerr << "generateMove(factorys)" << endl ;
+	if( tour % 20 ==13) cout << generateBomb(factorys, count); 
+	//cout << generateInc(factorys);
+	//cerr << "generateInc(factorys)" << endl ;
+	solveBattles(troops, factorys, tour);
+	explodeBombs(factorys, bombs, tour);   
+	//cerr << winner(troops, factorys, tour) << endl;
+	pair<int,int> ami_enemi=sumTroops(troops, factorys, tour);
+	res << endl;
+	return make_pair(ami_enemi.second-ami_enemi.first,res.str()); // small delta is better ... negative is better
+}
 //}
 /*
  * One game turn is computed as follows:
@@ -314,6 +342,7 @@ int main()
     map<int,Bomb> bombs;
     int count[3]={0,0,0};
     int tour=0;
+    vector<pair<int,string>> simu;
     
     for (int i = 0; i < linkCount; i++) { 
         int f1;
@@ -383,7 +412,7 @@ int main()
             	}*/ //donees statiques
             }
         }
-        cout << "WAIT" ;
+        /*cout << "WAIT" ;
         cout << generateInc(factorys);
         cerr << "generateInc(factorys)" << endl;
         cout << generateMove(factorys) ;
@@ -405,7 +434,13 @@ int main()
         explodeBombs(factorys, bombs, tour);   
         //cerr << winner(troops, factorys, tour) << endl;
         
-        cout << endl;
+        cout << endl;*/
+        for (int i=0; i<try; i++){
+            simu.push_back(simulateTour(troops, factorys, bombs,count, tour));
+        }
+        sort(simu.begin(),simu.end());
+        cout << simu.begin()->second;
+
     }
 
 }
